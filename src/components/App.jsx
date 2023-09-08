@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CreateContactForm } from './ContactForm/CreateContactForm';
 import { ContactList } from './ContactsLIst/ContactList';
 import { nanoid } from 'nanoid';
 import { Filter } from './Filter/Filter';
 import { Container } from './App.styled';
 
+const getInitialContacts = () => {
+  const checkStorage = JSON.parse(localStorage.getItem(`contacts`));
+  if (checkStorage !== null) {
+    return checkStorage;
+  } else {
+    return [{ id: 'id-1', name: 'Test Contact', number: '459-12-56' }];
+  }
+};
+
 export const App = () => {
-  const [contacts, setContacts] = useState([
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ]);
+  const [contacts, setContacts] = useState(getInitialContacts);
   const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const addContact = contact => {
     if (checkDuplicate(contact)) {
